@@ -11,7 +11,6 @@ require("dotenv").config();
 async function main() {
   // Middleware
   app.use(morgan("dev"));
-  console.log("CORS_ORIGIN: ", process.env.CORS_ORIGIN);
   app.use(
     cors({
       origin: [process.env.CORS_ORIGIN as string],
