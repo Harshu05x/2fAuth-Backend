@@ -6,13 +6,14 @@ import morgan from "morgan";
 
 export const prisma = new PrismaClient();
 const app = express();
+require("dotenv").config();
 
 async function main() {
   // Middleware
   app.use(morgan("dev"));
   app.use(
     cors({
-      origin: ["http://localhost:3000"],
+      origin: [process.env.CORS_ORIGIN as string],
       credentials: true,
     })
   );
