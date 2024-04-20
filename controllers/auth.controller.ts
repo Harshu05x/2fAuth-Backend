@@ -136,18 +136,17 @@ const VerifyOTP = async (req: Request, res: Response) => {
   try {
     const { user_id, token } = req.body;
 
-    const message = "Token is invalid or user doesn't exist";
     const user = await prisma.user.findUnique({ where: { id: user_id } });
     if (!user) {
       return res.status(401).json({
         status: "fail",
-        message,
+        message: "User doesn't exist",
       });
     }
 
     let totp = new OTPAuth.TOTP({
-      issuer: "codevoweb.com",
-      label: "CodevoWeb",
+      issuer: "2fAuth.com",
+      label: `${user.email}`,
       algorithm: "SHA1",
       digits: 6,
       secret: user.otp_base32!,
@@ -158,7 +157,7 @@ const VerifyOTP = async (req: Request, res: Response) => {
     if (delta === null) {
       return res.status(401).json({
         status: "fail",
-        message,
+        message: "Invalid Token",
       });
     }
 
@@ -192,16 +191,15 @@ const ValidateOTP = async (req: Request, res: Response) => {
     const { user_id, token } = req.body;
     const user = await prisma.user.findUnique({ where: { id: user_id } });
 
-    const message = "Token is invalid or user doesn't exist";
     if (!user) {
       return res.status(401).json({
         status: "fail",
-        message,
+        message: "User doesn't exist",
       });
     }
     let totp = new OTPAuth.TOTP({
-      issuer: "codevoweb.com",
-      label: "CodevoWeb",
+      issuer: "2fAuth.com",
+      label: `${user.email}`,
       algorithm: "SHA1",
       digits: 6,
       secret: user.otp_base32!,
@@ -212,7 +210,7 @@ const ValidateOTP = async (req: Request, res: Response) => {
     if (delta === null) {
       return res.status(401).json({
         status: "fail",
-        message,
+        message: "Invalid Token",
       });
     }
 
